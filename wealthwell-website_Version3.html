@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WealthWell - Students Building Smarter Futures</title>
+    <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4b8.svg">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {margin:0; padding:0; box-sizing:border-box;}
+        :root {--primary-color: #001f3f; --bg-light: #fff; --text-dark: #001f3f; --text-light: #fff; --gradient: linear-gradient(135deg,#fff 0%, #001f3f 100%); --card-bg:rgba(0,31,63,0.1);}
+        body {font-family:'Arial',sans-serif;line-height:1.6;color:var(--text-dark);background:var(--bg-light);overflow-x:hidden;}
+        nav {position:fixed;top:0;width:100%;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);z-index:1000;padding:1rem 0;transition:all 0.3s ease;border-bottom:1px solid rgba(0,31,63,0.2);}
+        .nav-container {max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 2rem;}
+        .logo {font-size:1.8rem;font-weight:bold;color:var(--text-dark);text-decoration:none;}
+        .nav-links {display:flex;gap:2rem;list-style:none;}
+        .nav-links a {color:var(--text-dark);text-decoration:none;transition:color 0.3s ease;cursor:pointer;}
+        .nav-links a:hover {color:var(--primary-color);}
+        .hero {height:100vh;background:var(--gradient);display:flex;align-items:center;justify-content:center;text-align:center;position:relative;}
+        .hero-content {max-width:800px;padding:2rem;animation:fadeInUp 1s ease;}
+        .hero h1 {font-size:3.5rem;margin-bottom:1rem;background:linear-gradient(45deg,#001f3f,#003d7a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+        .tagline {font-size:1.5rem;color:var(--text-dark);margin-bottom:2rem;opacity:0.9;}
+        .cta-button {background:var(--primary-color);color:var(--text-light);padding:1rem 2rem;border:none;border-radius:50px;font-size:1.1rem;font-weight:bold;cursor:pointer;transition:all 0.3s ease;text-decoration:none;display:inline-block;}
+        .cta-button:hover {transform:translateY(-3px);box-shadow:0 10px 25px rgba(0,31,63,0.3);background:#003d7a;}
+        .pillars {padding:5rem 2rem;background:var(--bg-light);color:var(--text-dark);}
+        .container {max-width:1200px;margin:0 auto;}
+        .section-title {text-align:center;font-size:2.5rem;margin-bottom:3rem;color:var(--text-dark);}
+        .pillars-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;}
+        .pillar-card {background:var(--card-bg);padding:2rem;border-radius:20px;text-align:center;transition:transform 0.3s ease;border:2px solid transparent;}
+        .pillar-card:hover {transform:translateY(-10px);border-color:var(--primary-color);}
+        .pillar-icon {font-size:3rem;margin-bottom:1rem;}
+        .pillar-card h3 {font-size:1.5rem;margin-bottom:1rem;color:var(--text-dark);}
+        .features {padding:5rem 2rem;background:rgba(0,31,63,0.05);}
+        .features-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:2rem;margin-top:3rem;}
+        .feature-card {background:var(--bg-light);padding:2rem;border-radius:15px;border:1px solid rgba(0,31,63,0.2);transition:all 0.3s ease;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+        .feature-card:hover {background:rgba(0,31,63,0.05);transform:translateY(-5px);box-shadow:0 10px 25px rgba(0,0,0,0.15);}
+        .feature-card h3 {color:var(--primary-color);margin-bottom:1rem;font-size:1.3rem;}
+        .quiz-section {padding:4rem 2rem;background:linear-gradient(135deg,#001f3f,#003d7a);color:var(--text-light);}
+        .quiz-container {max-width:800px;margin:0 auto;text-align:center;}
+        .section-title.quiz-title {color:var(--text-light);}
+        .timeline-section {padding:5rem 2rem;background:var(--bg-light);overflow:hidden;}
+        .timeline {position:relative;max-width:1000px;margin:0 auto;}
+        .timeline::before {content:'';position:absolute;width:2px;background:var(--primary-color);top:0;bottom:0;left:50%;margin-left:-1px;}
+        .timeline-item {padding:10px 40px;position:relative;background:transparent;width:50%;animation:slideIn 0.5s ease forwards;opacity:0;}
+        .timeline-item:nth-child(odd) {left:0;}
+        .timeline-item:nth-child(even) {left:50%;}
+        .timeline-content {background:rgba(0,31,63,0.1);padding:20px;border-radius:15px;border:1px solid rgba(0,31,63,0.3);color:var(--text-dark);}
+        .timeline-item::after {content:'';position:absolute;width:20px;height:20px;background:var(--primary-color);border-radius:50%;top:25px;}
+        .timeline-item:nth-child(odd)::after {right:-10px;}
+        .timeline-item:nth-child(even)::after {left:-10px;}
+        .data-viz {padding:5rem 2rem;background:rgba(0,31,63,0.05);color:var(--text-dark);}
+        .charts-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:2rem;margin-top:3rem;}
+        .chartjs-container {background:white;padding:2rem;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.1);margin-bottom:2rem;}
+        .chartjs-canvas {width:100% !important;height:300px !important;max-width:700px;margin:0 auto;}
+        .forum {padding:4rem 2rem;background:var(--bg-light);}
+        .forum-container {max-width:800px;margin:0 auto;}
+        .forum-input-section {background:white;padding:2rem;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.1);margin-bottom:2rem;}
+        .form-group {margin-bottom:1.5rem;}
+        .form-group label {display:block;margin-bottom:0.5rem;font-weight:bold;color:var(--text-dark);}
+        .form-group input, .form-group textarea {width:100%;padding:1rem;border:2px solid rgba(0,31,63,0.3);border-radius:10px;font-size:1rem;transition:border-color 0.3s ease;background:white;}
+        .form-group input:focus, .form-group textarea:focus {outline:none;border-color:var(--primary-color);}
+        .submit-btn {background:var(--primary-color);color:var(--text-light);padding:1rem 2rem;border:none;border-radius:10px;font-size:1rem;font-weight:bold;cursor:pointer;transition:all 0.3s ease;}
+        .submit-btn:hover {transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,31,63,0.3);background:#003d7a;}
+        .forum-posts {max-width:800px;margin:0 auto;}
+        .forum-post {background:white;padding:2rem;border-radius:15px;margin:1rem 0;border-left:4px solid var(--primary-color);box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+        .post-author {color:var(--primary-color);font-weight:bold;margin-bottom:0.5rem;}
+        .post-content {margin-bottom:1rem;}
+        .post-meta {font-size:0.9rem;opacity:0.7;}
+        footer {background:var(--text-dark);color:var(--text-light);padding:3rem 2rem;text-align:center;border-top:1px solid rgba(0,31,63,0.2);}
+        @keyframes fadeInUp {from {opacity:0;transform:translateY(30px);} to {opacity:1;transform:translateY(0);}}
+        @keyframes slideIn {from {opacity:0;transform:translateX(-50px);} to {opacity:1;transform:translateX(0);}}
+        @media (max-width: 768px) {
+            .hero h1 {font-size:2.5rem;}
+            .tagline {font-size:1.2rem;}
+            .nav-links {display:none;}
+            .timeline::before {left:31px;}
+            .timeline-item {width:100%;padding-left:70px;padding-right:25px;}
+            .timeline-item:nth-child(even) {left:0%;}
+            .timeline-item::after {left:21px;}
+        }
+        /* Quiz styles for contrast and smoothness */
+        .quiz-option {
+            background: #001f3f;
+            color: #fff;
+            border: 2px solid #001f3f;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 1rem;
+            margin-bottom: 7px;
+            transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+            box-shadow: 0 0 0 0 rgba(0,0,0,0);
+        }
+        .quiz-option:hover, .quiz-option:focus {
+            background: #003d7a;
+            color: #fff;
+            border-color: #003d7a;
+            box-shadow: 0 0 0 3px #7FDBFF;
+        }
+        .quiz-option.correct {
+            background: #2ecc71 !important;
+            color: #fff !important;
+            border-color: #27ae60 !important;
+        }
+        .quiz-option.incorrect {
+            background: #e74c3c !important;
+            color: #fff !important;
+            border-color: #c0392b !important;
+        }
+        .quiz-next-btn, .quiz-restart-btn {
+            background: #001f3f;
+            color: #fff;
+            padding: 0.7rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+        .quiz-next-btn:hover, .quiz-restart-btn:hover {
+            background: #003d7a;
+        }
+        .quiz-score {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        .quiz-progress {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #7FDBFF;
+            font-weight: bold;
+        }
+        #quiz-explanation {
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">WealthWell</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#pillars">Our Mission</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#quiz">Quiz</a></li>
+                <li><a href="#timeline">Timeline</a></li>
+                <li><a href="#data">Data</a></li>
+                <li><a href="#forum">Forum</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>WealthWell</h1>
+            <p class="tagline">Students Building Smarter Futures</p>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9; color: var(--text-dark);">
+                A student-led organization dedicated to promoting financial literacy, 
+                addressing wealth disparities, and equipping members with the tools to 
+                achieve stability and long-term success.
+            </p>
+            <a href="#pillars" class="cta-button">Explore Our Mission</a>
+        </div>
+    </section>
+
+    <!-- Three Pillars Section -->
+    <section id="pillars" class="pillars">
+        <div class="container">
+            <h2 class="section-title">Our Three Pillars</h2>
+            <div class="pillars-grid">
+                <div class="pillar-card">
+                    <div class="pillar-icon">📚</div>
+                    <h3>Education</h3>
+                    <p>Financial literacy and knowledge empowerment through comprehensive learning resources, workshops, and peer-to-peer education.</p>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-icon">⚖️</div>
+                    <h3>Equity</h3>
+                    <p>Addressing wealth disparity and promoting fairness by understanding systemic barriers and working toward inclusive solutions.</p>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-icon">💹</div>
+                    <h3>Economy</h3>
+                    <p>Understanding economic systems and building stability through practical insights into markets, investments, and financial planning.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Unique Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>🧠 Interactive Quizzes & Challenges</h3>
+                    <p>Test your financial knowledge with engaging quizzes and earn points as you master key concepts in personal finance and economics.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📰 Economic News Simplified</h3>
+                    <p>Stay informed with complex economic news broken down into digestible, student-friendly explanations and analysis.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💬 Financial Forum</h3>
+                    <p>Connect with peers, ask questions, share insights, and discuss financial strategies in our supportive community forum.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💰 Investment Tips</h3>
+                    <p>Learn smart investment strategies tailored for students and young professionals starting their wealth-building journey.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Data Visualizations</h3>
+                    <p>Explore interactive charts showing wage gaps, student debt trends, and wealth disparity statistics in real-time.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 Inequality Timeline</h3>
+                    <p>Journey through decades of wealth disparity evolution with our interactive historical timeline.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Multi-Question Interactive Quiz Section (upgraded, high-contrast, smooth) -->
+    <section id="quiz" class="quiz-section">
+        <div class="quiz-container">
+            <h2 class="section-title quiz-title">Test Your Knowledge</h2>
+            <div id="quiz-area"></div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline" class="timeline-section">
+        <div class="container">
+            <h2 class="section-title">Inequality Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>1970s</h3>
+                        <p>Income inequality begins to rise as manufacturing jobs decline and service economy emerges.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>1980s</h3>
+                        <p>Reagan-era policies and deregulation contribute to widening wealth gaps between top earners and middle class.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>2000s</h3>
+                        <p>Tech boom creates new millionaires while student debt crisis begins, affecting young adults disproportionately.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>2008</h3>
+                        <p>Financial crisis hits hardest on lower and middle-income families, while wealth concentrates further at the top.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>2020s</h3>
+                        <p>Pandemic amplifies existing inequalities while also creating new opportunities for financial education and awareness.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Visualization Section (Chart.js) -->
+    <section id="data" class="data-viz">
+        <div class="container">
+            <h2 class="section-title">Live Data Dashboard</h2>
+            <div class="charts-grid">
+                <div class="chartjs-container">
+                    <h3>Wealth Distribution in America (2024)</h3>
+                    <canvas id="chart-wealth" class="chartjs-canvas"></canvas>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                        Share of total U.S. wealth by income group (2024 data)
+                    </p>
+                </div>
+                <div class="chartjs-container">
+                    <h3>Average Student Debt by Degree Type (2024)</h3>
+                    <canvas id="chart-debt" class="chartjs-canvas"></canvas>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                        Average student loan debt by education level
+                    </p>
+                </div>
+                <div class="chartjs-container">
+                    <h3>Top 1% Wealth Growth Over Time</h3>
+                    <canvas id="chart-growth" class="chartjs-canvas"></canvas>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                        Top 1% total wealth accumulation since 1989
+                    </p>
+                </div>
+                <div class="chartjs-container">
+                    <h3>Student Debt Burden vs Income</h3>
+                    <canvas id="chart-debt-income" class="chartjs-canvas"></canvas>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                        Student debt as percentage of median starting salary
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Forum Section -->
+    <section id="forum" class="forum">
+        <div class="container">
+            <h2 class="section-title">Community Forum</h2>
+            <div class="forum-input-section">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary-color);">Start a New Discussion</h3>
+                <form id="forum-form">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required placeholder="Enter your username">
+                    </div>
+                    <div class="form-group">
+                        <label for="topic">Topic/Subject:</label>
+                        <input type="text" id="topic" name="topic" required placeholder="What would you like to discuss?">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message:</label>
+                        <textarea id="message" name="message" rows="4" required placeholder="Share your thoughts, questions, or experiences..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Post Discussion</button>
+                </form>
+            </div>
+            <div class="forum-posts" id="forum-posts">
+                <div style="text-align: center; padding: 2rem; color: var(--text-dark); opacity: 0.7;">
+                    <p>No discussions yet. Be the first to start a conversation!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 WealthWell. Students Building Smarter Futures.</p>
+            <p style="margin-top: 1rem; opacity: 0.7;">
+                Empowering the next generation through Education, Equity, and Economic understanding.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // --- Multi-Question Quiz Logic (contrast and smoothness improved) ---
+        const quizQuestions = [
+            {
+                question: "What percentage of Americans live paycheck to paycheck?",
+                options: ["25%", "45%", "64%", "80%"],
+                correct: 2,
+                explanation: "Approximately 64% of Americans live paycheck to paycheck."
+            },
+            {
+                question: "Which group holds the largest share of US wealth?",
+                options: ["Top 1%", "Top 10%", "Next 40%", "Bottom 50%"],
+                correct: 1,
+                explanation: "The Top 10% holds about 67% of total US wealth."
+            },
+            {
+                question: "What is the average student loan debt for a Bachelor's degree in 2024?",
+                options: ["$14,500", "$28,244", "$38,000", "$58,490"],
+                correct: 1,
+                explanation: "Bachelor's degree holders average $28,244 in student debt."
+            }
+        ];
+
+        let quizIndex = 0;
+        let quizScore = 0;
+        let quizAnswered = false;
+
+        function renderQuiz() {
+            const area = document.getElementById('quiz-area');
+            area.innerHTML = "";
+
+            if (quizIndex < quizQuestions.length) {
+                const q = quizQuestions[quizIndex];
+                const qDiv = document.createElement('div');
+                qDiv.className = "quiz-question";
+                qDiv.innerHTML = `
+                    <div class="quiz-progress">Question ${quizIndex+1} of ${quizQuestions.length}</div>
+                    <h3>${q.question}</h3>
+                    <div class="quiz-options">${q.options.map((opt, i) => 
+                        `<button class="quiz-option" data-idx="${i}" tabindex="0">${opt}</button>`
+                    ).join('')}</div>
+                    <div id="quiz-explanation" style="display:none;margin-top:1rem;font-style:italic;font-weight:bold;"></div>
+                    <button id="quiz-next-btn" class="quiz-next-btn" style="display:none;">Next</button>
+                    <div class="quiz-score">Score: ${quizScore} / ${quizQuestions.length}</div>
+                `;
+                area.appendChild(qDiv);
+
+                // Fade-in animation
+                qDiv.style.opacity = 0;
+                setTimeout(() => { qDiv.style.transition = "opacity 0.5s"; qDiv.style.opacity = 1; }, 50);
+
+                // Add option click listeners
+                let opts = qDiv.querySelectorAll('.quiz-option');
+                opts.forEach(opt => {
+                    opt.onclick = function() {
+                        if (quizAnswered) return;
+                        const idx = parseInt(opt.getAttribute('data-idx'));
+                        quizAnswered = true;
+                        opts.forEach(o => {
+                            o.disabled = true;
+                            o.style.opacity = "0.6";
+                        });
+                        if (idx === q.correct) {
+                            opt.classList.add('correct');
+                            opt.style.background = "#2ecc71";
+                            opt.style.color = "#fff";
+                            opt.style.borderColor = "#27ae60";
+                            quizScore++;
+                            document.getElementById('quiz-explanation').textContent = "✔️ " + q.explanation;
+                        } else {
+                            opt.classList.add('incorrect');
+                            opt.style.background = "#e74c3c";
+                            opt.style.color = "#fff";
+                            opt.style.borderColor = "#c0392b";
+                            opts[q.correct].classList.add('correct');
+                            opts[q.correct].style.background = "#2ecc71";
+                            opts[q.correct].style.color = "#fff";
+                            opts[q.correct].style.borderColor = "#27ae60";
+                            document.getElementById('quiz-explanation').textContent = "✖️ " + q.explanation;
+                        }
+                        document.getElementById('quiz-explanation').style.display = 'block';
+                        document.getElementById('quiz-next-btn').style.display = 'inline-block';
+                        qDiv.querySelector('.quiz-score').textContent = `Score: ${quizScore} / ${quizQuestions.length}`;
+                    }
+                    // Keyboard accessibility
+                    opt.onkeydown = function(e){
+                        if ((e.key === "Enter" || e.key === " ") && !quizAnswered) {
+                            opt.click();
+                        }
+                    }
+                });
+
+                document.getElementById('quiz-next-btn').onclick = function() {
+                    quizIndex++;
+                    quizAnswered = false;
+                    renderQuiz();
+                };
+            } else {
+                // Quiz finished
+                area.innerHTML = `
+                    <div class="quiz-question" style="text-align:center;">
+                        <h3>Quiz Completed!</h3>
+                        <div class="quiz-score" style="font-size:1.5rem;">Your Score: ${quizScore} / ${quizQuestions.length}</div>
+                        <p style="margin:1rem 0;font-size:1.1rem;">
+                            ${quizScore === quizQuestions.length ? "Excellent work! You mastered the challenge." : 
+                            quizScore >= quizQuestions.length/2 ? "Good job! Keep learning and improving your financial knowledge." :
+                            "Don't worry! Keep exploring WealthWell to boost your financial literacy."}
+                        </p>
+                        <button class="quiz-restart-btn" onclick="restartQuiz()" style="background:#001f3f;color:#fff;">Try Again</button>
+                    </div>
+                `;
+            }
+        }
+        function restartQuiz() {
+            quizIndex = 0;
+            quizScore = 0;
+            quizAnswered = false;
+            renderQuiz();
+        }
+        renderQuiz();
+
+        // Timeline animation on scroll
+        const observerOptions = {threshold: 0.1, rootMargin: '0px 0px -50px 0px'};
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = `${index * 0.2}s`;
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            timelineObserver.observe(item);
+        });
+
+        // Add navbar background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                nav.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+
+        // Forum functionality
+        document.getElementById('forum-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const topic = document.getElementById('topic').value;
+            const message = document.getElementById('message').value;
+            if (username && topic && message) {
+                addForumPost(username, topic, message);
+                this.reset();
+            }
+        });
+        function addForumPost(username, topic, message) {
+            const postsContainer = document.getElementById('forum-posts');
+            const noDiscussions = postsContainer.querySelector('[style*="text-align: center"]');
+            if (noDiscussions) noDiscussions.remove();
+            const postElement = document.createElement('div');
+            postElement.className = 'forum-post';
+            postElement.style.animation = 'fadeInUp 0.5s ease';
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            postElement.innerHTML = `
+                <div class="post-author">@${username}</div>
+                <div style="font-weight: bold; margin-bottom: 0.5rem; color: var(--primary-color);">${topic}</div>
+                <div class="post-content">${message}</div>
+                <div class="post-meta">Just now • 0 replies</div>
+            `;
+            postsContainer.insertBefore(postElement, postsContainer.firstChild);
+        }
+
+        // --- Chart.js Data Visualizations ---
+        // Wealth Distribution
+        new Chart(document.getElementById('chart-wealth').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Top 1%', 'Top 10%', 'Next 40%', 'Bottom 50%'],
+                datasets: [{
+                    label: 'Share of Wealth (%)',
+                    data: [30, 67, 31, 2],
+                    backgroundColor: [
+                        '#003d7a', '#001f3f', '#7fdbff', '#dddddd'
+                    ],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: {display: false}},
+                scales: {
+                    y: {beginAtZero: true, max: 100, ticks: {stepSize: 20}}
+                }
+            }
+        });
+        // Student Debt
+        new Chart(document.getElementById('chart-debt').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ["Bachelor's", "Master's", "Doctorate", "All Graduates"],
+                datasets: [{
+                    label: 'Average Debt ($)',
+                    data: [28244, 58490, 107720, 38000],
+                    backgroundColor: ['#0074d9', '#2ecc40', '#ff4136', '#b10dc9'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: {display: false}},
+                scales: {
+                    y: {beginAtZero: true, ticks: {stepSize: 20000}}
+                }
+            }
+        });
+        // Top 1% Wealth Growth
+        new Chart(document.getElementById('chart-growth').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['1989', '2000', '2010', '2024'],
+                datasets: [{
+                    label: 'Top 1% Total Wealth ($ Trillion)',
+                    data: [7.4, 15.2, 24.8, 49.2],
+                    fill: true,
+                    backgroundColor: 'rgba(0,31,63,0.1)',
+                    borderColor: '#001f3f',
+                    tension: 0.3,
+                    pointBackgroundColor: '#003d7a'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: {display: true}},
+                scales: {
+                    y: {beginAtZero: true, ticks: {stepSize: 10}}
+                }
+            }
+        });
+        // Student Debt Burden vs Income
+        new Chart(document.getElementById('chart-debt-income').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['2000', '2010', '2020', '2024'],
+                datasets: [{
+                    label: 'Debt-to-Income (%)',
+                    data: [50, 65, 70, 64],
+                    backgroundColor: ['#ffdc00', '#0074d9', '#2ecc40', '#001f3f'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: {display: false}},
+                scales: {
+                    y: {beginAtZero: true, max: 100, ticks: {stepSize: 10}}
+                }
+            }
+        });
+    </script>
+</body>
+</html>
