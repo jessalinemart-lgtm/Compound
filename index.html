@@ -151,6 +151,7 @@
                 <li><a href="#quiz">Quiz</a></li>
                 <li><a href="#timeline">Timeline</a></li>
                 <li><a href="#data">Data</a></li>
+                <li><a href="#calculators">Calculators</a></li>
                 <li><a href="#forum">Forum</a></li>
             </ul>
         </div>
@@ -226,7 +227,793 @@
             </div>
         </div>
     </section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WealthWell — Financial Calculators</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --navy: #001f3f;
+            --navy-mid: #003d7a;
+            --navy-light: rgba(0,31,63,0.08);
+            --white: #ffffff;
+            --accent: #7FDBFF;
+            --green: #2ecc71;
+            --text: #001f3f;
+        }
 
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f7f9fc;
+            color: var(--text);
+        }
+
+        /* ── Section wrapper ── */
+        .calculators-section {
+            padding: 5rem 2rem;
+            background: var(--white);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--navy);
+            opacity: 0.65;
+            font-size: 1.05rem;
+            margin-bottom: 3rem;
+        }
+
+        /* ── Tab nav ── */
+        .calc-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .calc-tab {
+            padding: 0.6rem 1.4rem;
+            border: 2px solid var(--navy);
+            border-radius: 50px;
+            background: transparent;
+            color: var(--navy);
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .calc-tab:hover { background: var(--navy-light); }
+
+        .calc-tab.active {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        /* ── Calculator panels ── */
+        .calc-panel { display: none; }
+        .calc-panel.active { display: block; }
+
+        .calc-card {
+            background: var(--white);
+            border: 1px solid rgba(0,31,63,0.15);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0,31,63,0.08);
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .calc-card h3 {
+            font-size: 1.4rem;
+            color: var(--navy);
+            margin-bottom: 0.4rem;
+        }
+
+        .calc-card .calc-desc {
+            font-size: 0.95rem;
+            color: var(--navy);
+            opacity: 0.65;
+            margin-bottom: 2rem;
+            border-left: 3px solid var(--accent);
+            padding-left: 0.8rem;
+        }
+
+        /* ── Input grid ── */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--navy);
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .input-group input {
+            padding: 0.75rem 1rem;
+            border: 2px solid rgba(0,31,63,0.2);
+            border-radius: 10px;
+            font-size: 1rem;
+            color: var(--navy);
+            background: #f7f9fc;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--navy);
+            background: var(--white);
+        }
+
+        /* ── Calculate button ── */
+        .calc-btn {
+            background: var(--navy);
+            color: var(--white);
+            padding: 0.85rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: block;
+            margin: 0 auto 1.8rem;
+        }
+
+        .calc-btn:hover {
+            background: var(--navy-mid);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,31,63,0.25);
+        }
+
+        /* ── Result box ── */
+        .result-box {
+            display: none;
+            background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+            color: var(--white);
+            border-radius: 14px;
+            padding: 1.8rem 2rem;
+            text-align: center;
+            animation: fadeUp 0.4s ease;
+        }
+
+        .result-box.show { display: block; }
+
+        .result-box .result-label {
+            font-size: 0.9rem;
+            opacity: 0.75;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-box .result-value {
+            font-size: 2.4rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+        }
+
+        .result-box .result-breakdown {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-top: 0.8rem;
+        }
+
+        /* ── Portfolio table ── */
+        .portfolio-table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead tr {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        thead th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        tbody tr { border-bottom: 1px solid rgba(0,31,63,0.1); }
+        tbody tr:hover { background: var(--navy-light); }
+
+        tbody td {
+            padding: 0.7rem 1rem;
+            color: var(--navy);
+        }
+
+        tbody td input {
+            border: 1px solid rgba(0,31,63,0.2);
+            border-radius: 6px;
+            padding: 0.4rem 0.5rem;
+            width: 100%;
+            font-size: 0.9rem;
+            background: transparent;
+            color: var(--navy);
+        }
+
+        tbody td input:focus {
+            outline: none;
+            border-color: var(--navy);
+        }
+
+        .add-row-btn {
+            background: transparent;
+            border: 2px dashed rgba(0,31,63,0.3);
+            color: var(--navy);
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .add-row-btn:hover {
+            border-color: var(--navy);
+            background: var(--navy-light);
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        /* ── Portfolio result ── */
+        .portfolio-results {
+            display: none;
+        }
+
+        .portfolio-results.show { display: block; }
+
+        .portfolio-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-card {
+            background: var(--navy-light);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .summary-card .s-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.65;
+            margin-bottom: 0.4rem;
+        }
+
+        .summary-card .s-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--navy);
+        }
+
+        .portfolio-breakdown-table thead tr { background: var(--navy-mid); }
+
+        /* ── XIRR ── */
+        .xirr-table td input { min-width: 110px; }
+
+        .xirr-note {
+            background: rgba(127,219,255,0.15);
+            border-left: 3px solid var(--accent);
+            padding: 0.8rem 1rem;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.88rem;
+            color: var(--navy);
+            margin-bottom: 1.5rem;
+        }
+
+        /* ── Rule of 72 special display ── */
+        .rule72-visual {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.2rem;
+        }
+
+        .rule72-visual.show { display: flex; }
+
+        .rule72-circle {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+        }
+
+        .rule72-circle .years-num {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .rule72-circle .years-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .calc-card { padding: 1.5rem; }
+            .result-box .result-value { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     PASTE THIS ENTIRE <section> INTO YOUR HTML
+     right before the <section id="forum"> block
+═══════════════════════════════════════════════ -->
+
+<section id="calculators" class="calculators-section">
+    <div class="container">
+        <h2 class="section-title">Financial Calculators</h2>
+        <p class="section-subtitle">Run the same formulas used by real investors — no spreadsheet needed.</p>
+
+        <!-- Tab nav -->
+        <div class="calc-tabs">
+            <button class="calc-tab active" onclick="switchTab('fv')">💰 Future Value</button>
+            <button class="calc-tab" onclick="switchTab('pv')">🎯 Present Value</button>
+            <button class="calc-tab" onclick="switchTab('r72')">⚡ Rule of 72</button>
+            <button class="calc-tab" onclick="switchTab('portfolio')">📊 Portfolio Planner</button>
+            <button class="calc-tab" onclick="switchTab('xirr')">📈 True Return (XIRR)</button>
+        </div>
+
+        <!-- ── 1. FUTURE VALUE ── -->
+        <div id="panel-fv" class="calc-panel active">
+            <div class="calc-card">
+                <h3>💰 Future Value Calculator</h3>
+                <p class="calc-desc">How much will your investment be worth over time with regular contributions?</p>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Starting Amount ($)</label>
+                        <input type="number" id="fv-pv" value="2600" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Monthly Contribution ($)</label>
+                        <input type="number" id="fv-pmt" value="300" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Annual Interest Rate (%)</label>
+                        <input type="number" id="fv-rate" value="8" step="0.1" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Number of Years</label>
+                        <input type="number" id="fv-years" value="10" min="1">
+                    </div>
+                </div>
+                <button class="calc-btn" onclick="calcFV()">Calculate Future Value</button>
+                <div class="result-box" id="fv-result">
+                    <div class="result-label">Your investment will grow to</div>
+                    <div class="result-value" id="fv-result-val"></div>
+                    <div class="result-breakdown" id="fv-result-breakdown"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 2. PRESENT VALUE ── -->
+        <div id="panel-pv" class="calc-panel">
+            <div class="calc-card">
+                <h3>🎯 Present Value Calculator</h3>
+                <p class="calc-desc">How much do you need to invest today to reach a specific future goal?</p>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Target Goal ($)</label>
+                        <input type="number" id="pv-fv" value="50000" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Annual Interest Rate (%)</label>
+                        <input type="number" id="pv-rate" value="4" step="0.1" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Years to Wait</label>
+                        <input type="number" id="pv-years" value="5" min="1">
+                    </div>
+                </div>
+                <button class="calc-btn" onclick="calcPV()">Calculate Present Value</button>
+                <div class="result-box" id="pv-result">
+                    <div class="result-label">You need to invest today</div>
+                    <div class="result-value" id="pv-result-val"></div>
+                    <div class="result-breakdown" id="pv-result-breakdown"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 3. RULE OF 72 ── -->
+        <div id="panel-r72" class="calc-panel">
+            <div class="calc-card">
+                <h3>⚡ Rule of 72</h3>
+                <p class="calc-desc">A quick mental math trick: divide 72 by your interest rate to find how many years it takes to double your money.</p>
+                <div class="input-grid" style="max-width:280px;">
+                    <div class="input-group">
+                        <label>Annual Interest Rate (%)</label>
+                        <input type="number" id="r72-rate" value="8" step="0.1" min="0.1">
+                    </div>
+                </div>
+                <button class="calc-btn" onclick="calcR72()">Calculate Doubling Time</button>
+                <div class="result-box" id="r72-result">
+                    <div class="result-label">Your money doubles in approximately</div>
+                    <div class="result-value" id="r72-result-val"></div>
+                    <div class="result-breakdown" id="r72-result-breakdown"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 4. PORTFOLIO PLANNER ── -->
+        <div id="panel-portfolio" class="calc-panel">
+            <div class="calc-card">
+                <h3>📊 Portfolio Planner</h3>
+                <p class="calc-desc">Map out multiple investments and see your total projected future value. Use 8% as a benchmark if you're unsure of the growth rate.</p>
+                <div class="portfolio-table-wrapper">
+                    <table id="portfolio-table">
+                        <thead>
+                            <tr>
+                                <th>Investment</th>
+                                <th>Account Type</th>
+                                <th>Starting ($)</th>
+                                <th>Monthly Add ($)</th>
+                                <th>Growth Rate (%)</th>
+                                <th>Years</th>
+                                <th>Future Value</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="portfolio-body">
+                            <!-- pre-filled rows from your Excel -->
+                        </tbody>
+                    </table>
+                </div>
+                <button class="add-row-btn" onclick="addPortfolioRow()">+ Add Investment</button>
+                <button class="calc-btn" onclick="calcPortfolio()">Calculate Portfolio</button>
+
+                <div class="portfolio-results" id="portfolio-results">
+                    <div class="portfolio-summary">
+                        <div class="summary-card">
+                            <div class="s-label">Total Invested</div>
+                            <div class="s-value" id="p-total-invested"></div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="s-label">Total Future Value</div>
+                            <div class="s-value" id="p-total-fv" style="color:var(--navy-mid)"></div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="s-label">Total Growth</div>
+                            <div class="s-value" id="p-total-growth" style="color:var(--green)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 5. XIRR ── -->
+        <div id="panel-xirr" class="calc-panel">
+            <div class="calc-card">
+                <h3>📈 True Return (XIRR)</h3>
+                <p class="calc-desc">Track your actual return by logging every cash inflow and outflow with its exact date. The most accurate way to measure your wealth-building speed.</p>
+                <div class="xirr-note">
+                    💡 Enter purchases as <strong>negative</strong> numbers (money leaving your pocket) and your current portfolio value as a <strong>positive</strong> number on today's date.
+                </div>
+                <div class="portfolio-table-wrapper">
+                    <table id="xirr-table" class="xirr-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Cash Flow ($)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="xirr-body"></tbody>
+                    </table>
+                </div>
+                <button class="add-row-btn" onclick="addXirrRow()">+ Add Transaction</button>
+                <button class="calc-btn" onclick="calcXIRR()">Calculate True Return</button>
+                <div class="result-box" id="xirr-result">
+                    <div class="result-label">Your annualized return (XIRR)</div>
+                    <div class="result-value" id="xirr-result-val"></div>
+                    <div class="result-breakdown" id="xirr-result-breakdown"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<script>
+// ─────────────────────────────────────────
+// Tab switching
+// ─────────────────────────────────────────
+function switchTab(id) {
+    document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+// ─────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────
+const fmt = (n) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+function fvCalc(pv, pmt, rate, years) {
+    // Compound interest with monthly contributions
+    const n = years * 12;
+    const r = rate / 100 / 12;
+    if (r === 0) return pv + pmt * n;
+    return pv * Math.pow(1 + r, n) + pmt * (Math.pow(1 + r, n) - 1) / r;
+}
+
+// ─────────────────────────────────────────
+// 1. Future Value
+// ─────────────────────────────────────────
+function calcFV() {
+    const pv    = parseFloat(document.getElementById('fv-pv').value) || 0;
+    const pmt   = parseFloat(document.getElementById('fv-pmt').value) || 0;
+    const rate  = parseFloat(document.getElementById('fv-rate').value) || 0;
+    const years = parseFloat(document.getElementById('fv-years').value) || 1;
+
+    const fv = fvCalc(pv, pmt, rate, years);
+    const totalIn = pv + pmt * years * 12;
+    const earned  = fv - totalIn;
+
+    const box = document.getElementById('fv-result');
+    document.getElementById('fv-result-val').textContent = fmt(fv);
+    document.getElementById('fv-result-breakdown').innerHTML =
+        `Total invested: ${fmt(totalIn)} &nbsp;|&nbsp; Interest earned: ${fmt(earned)}`;
+    box.classList.add('show');
+}
+
+// ─────────────────────────────────────────
+// 2. Present Value
+// ─────────────────────────────────────────
+function calcPV() {
+    const fvTarget = parseFloat(document.getElementById('pv-fv').value) || 0;
+    const rate     = parseFloat(document.getElementById('pv-rate').value) || 0;
+    const years    = parseFloat(document.getElementById('pv-years').value) || 1;
+
+    const r  = rate / 100;
+    const pv = fvTarget / Math.pow(1 + r, years);
+    const growth = fvTarget - pv;
+
+    const box = document.getElementById('pv-result');
+    document.getElementById('pv-result-val').textContent = fmt(pv);
+    document.getElementById('pv-result-breakdown').innerHTML =
+        `Your ${fmt(pv)} grows to ${fmt(fvTarget)} &nbsp;|&nbsp; Interest earned: ${fmt(growth)}`;
+    box.classList.add('show');
+}
+
+// ─────────────────────────────────────────
+// 3. Rule of 72
+// ─────────────────────────────────────────
+function calcR72() {
+    const rate  = parseFloat(document.getElementById('r72-rate').value) || 1;
+    const years = (72 / rate).toFixed(1);
+
+    const box = document.getElementById('r72-result');
+    document.getElementById('r72-result-val').textContent = years + ' years';
+    document.getElementById('r72-result-breakdown').innerHTML =
+        `At ${rate}% annual growth, $1,000 becomes $2,000 in ~${years} years`;
+    box.classList.add('show');
+}
+
+// ─────────────────────────────────────────
+// 4. Portfolio Planner
+// ─────────────────────────────────────────
+const defaultPortfolio = [
+    { name: 'AAPL',  type: 'Brokerage', start: 179.35, pmt: 300, rate: 28.5, years: 10 },
+    { name: 'NVDA',  type: 'Brokerage', start: 145.82, pmt: 400, rate: 50,   years: 10 },
+    { name: 'GOOGL', type: 'Brokerage', start: 188.58, pmt: 400, rate: 18.3, years: 10 },
+    { name: 'VTI',   type: 'Brokerage', start: 585.45, pmt: 400, rate: 13.1, years: 10 },
+    { name: 'QQQM',  type: 'Roth IRA',  start: 950.56, pmt: 350, rate: 18.2, years: 10 },
+    { name: 'VOO',   type: 'Roth IRA',  start: 290.57, pmt: 700, rate: 13.3, years: 10 },
+    { name: 'SCHD',  type: 'Roth IRA',  start: 488.41, pmt: 60,  rate: 11.4, years: 10 },
+];
+
+function buildPortfolioRows() {
+    const tbody = document.getElementById('portfolio-body');
+    tbody.innerHTML = '';
+    defaultPortfolio.forEach((r, i) => addPortfolioRow(r));
+}
+
+function addPortfolioRow(data) {
+    const tbody = document.getElementById('portfolio-body');
+    const d = data || { name: '', type: 'Brokerage', start: 0, pmt: 0, rate: 8, years: 10 };
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><input type="text"   class="p-name"  value="${d.name}"  placeholder="e.g. VTI"></td>
+        <td><input type="text"   class="p-type"  value="${d.type}"  placeholder="Brokerage"></td>
+        <td><input type="number" class="p-start" value="${d.start}" min="0" step="0.01"></td>
+        <td><input type="number" class="p-pmt"   value="${d.pmt}"   min="0"></td>
+        <td><input type="number" class="p-rate"  value="${d.rate}"  min="0" step="0.1"></td>
+        <td><input type="number" class="p-years" value="${d.years}" min="1"></td>
+        <td class="p-fv-cell" style="font-weight:bold;color:var(--navy-mid);">—</td>
+        <td><button class="delete-btn" onclick="this.closest('tr').remove()">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+}
+
+function calcPortfolio() {
+    const rows = document.querySelectorAll('#portfolio-body tr');
+    let totalInvested = 0, totalFV = 0;
+
+    rows.forEach(row => {
+        const start = parseFloat(row.querySelector('.p-start').value) || 0;
+        const pmt   = parseFloat(row.querySelector('.p-pmt').value)   || 0;
+        const rate  = parseFloat(row.querySelector('.p-rate').value)   || 0;
+        const years = parseFloat(row.querySelector('.p-years').value)  || 1;
+
+        const fv = fvCalc(start, pmt, rate, years);
+        row.querySelector('.p-fv-cell').textContent = fmt(fv);
+
+        totalInvested += start + pmt * years * 12;
+        totalFV += fv;
+    });
+
+    document.getElementById('p-total-invested').textContent = fmt(totalInvested);
+    document.getElementById('p-total-fv').textContent = fmt(totalFV);
+    document.getElementById('p-total-growth').textContent = '+' + fmt(totalFV - totalInvested);
+    document.getElementById('portfolio-results').classList.add('show');
+}
+
+buildPortfolioRows();
+
+// ─────────────────────────────────────────
+// 5. XIRR
+// ─────────────────────────────────────────
+
+// Pre-fill with Excel sample data (dates converted from Excel serial numbers)
+const defaultXirr = [
+    { date: '2025-03-06', val: -26.93 },
+    { date: '2025-03-27', val: -25.45 },
+    { date: '2025-06-02', val: -0.52  },
+    { date: '2025-06-18', val: -53.70 },
+    { date: '2025-09-01', val: -1.05  },
+    { date: '2025-11-17', val: -1.13  },
+    { date: '2025-12-12', val: -85.85 },
+    { date: '2026-03-02', val: -1.82  },
+    { date: '2026-03-25', val: -62.36 },
+    { date: '2026-04-20', val: -31.76 },
+    { date: '2026-05-20', val:  327.72 }, // current value = positive
+];
+
+function buildXirrRows() {
+    const tbody = document.getElementById('xirr-body');
+    tbody.innerHTML = '';
+    defaultXirr.forEach(r => addXirrRow(r));
+}
+
+function addXirrRow(data) {
+    const tbody = document.getElementById('xirr-body');
+    const d = data || { date: new Date().toISOString().split('T')[0], val: 0 };
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><input type="date" class="x-date" value="${d.date}"></td>
+        <td><input type="number" class="x-val" value="${d.val}" step="0.01"></td>
+        <td><button class="delete-btn" onclick="this.closest('tr').remove()">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+}
+
+buildXirrRows();
+
+// Newton-Raphson XIRR implementation
+function xirr(cashflows, dates) {
+    const PRECISION = 1e-7, MAX_ITER = 1000;
+    const t0 = dates[0];
+    let rate = 0.1;
+
+    for (let i = 0; i < MAX_ITER; i++) {
+        let f = 0, df = 0;
+        for (let j = 0; j < cashflows.length; j++) {
+            const t = (dates[j] - t0) / (365 * 24 * 3600 * 1000);
+            const v = Math.pow(1 + rate, t);
+            f  += cashflows[j] / v;
+            df -= t * cashflows[j] / (v * (1 + rate));
+        }
+        const newRate = rate - f / df;
+        if (Math.abs(newRate - rate) < PRECISION) return newRate;
+        rate = newRate;
+    }
+    return rate;
+}
+
+function calcXIRR() {
+    const rows = document.querySelectorAll('#xirr-body tr');
+    const cashflows = [], dates = [];
+
+    rows.forEach(row => {
+        const d = row.querySelector('.x-date').value;
+        const v = parseFloat(row.querySelector('.x-val').value);
+        if (d && !isNaN(v)) {
+            dates.push(new Date(d));
+            cashflows.push(v);
+        }
+    });
+
+    if (cashflows.length < 2) {
+        alert('Please enter at least 2 transactions (purchases + current value).');
+        return;
+    }
+
+    const box = document.getElementById('xirr-result');
+    try {
+        const rate = xirr(cashflows, dates);
+        const pct  = (rate * 100).toFixed(2);
+        document.getElementById('xirr-result-val').textContent = pct + '%';
+        document.getElementById('xirr-result-breakdown').innerHTML =
+            `Your money is growing at <strong>${pct}%</strong> per year on an annualized basis.<br>
+             ${pct > 15 ? '🔥 Excellent return!' : pct > 8 ? '✅ Solid, above the market average.' : '📚 Moderate — consider reviewing your allocations.'}`;
+        box.classList.add('show');
+    } catch(e) {
+        document.getElementById('xirr-result-val').textContent = 'Error';
+        document.getElementById('xirr-result-breakdown').textContent =
+            'Could not converge. Make sure you have at least one positive value (your current portfolio value).';
+        box.classList.add('show');
+    }
+}
+</script>
+
+</body>
+</html>
     <!-- Multi-Question Interactive Quiz Section (upgraded, high-contrast, smooth) -->
     <section id="quiz" class="quiz-section">
         <div class="quiz-container">
