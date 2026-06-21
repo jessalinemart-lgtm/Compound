@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Compound - Build a Smarter Future</title>
+    <title>Compound - Build a Smarter Future</title>
     <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4b8.svg">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -138,7 +138,7 @@
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <a href="#" class="logo">WealthWell</a>
+            <a href="#" class="logo">Compound</a>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#pillars">Our Mission</a></li>
@@ -155,8 +155,8 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1>WealthWell</h1>
-            <p class="tagline">Students Building Smarter Futures</p>
+            <h1>Compound</h1>
+            <p class="tagline">Build a Smarter Future</p>
             <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9; color: var(--text-dark);">
                 A student-led organization dedicated to promoting financial literacy, 
                 addressing wealth disparities, and equipping members with the tools to 
@@ -460,7 +460,7 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 InterestEarned. Students Building Smarter Futures.</p>
+            <p>&copy; 2025 Compound. Build a Smarter Future.</p>
             <p style="margin-top:1rem;opacity:0.7;">Empowering the next generation through Education, Equity, and Economic understanding.</p>
         </div>
     </footer>
@@ -520,7 +520,7 @@
                 });
                 document.getElementById('quiz-next-btn').onclick = function() { quizIndex++; quizAnswered = false; renderQuiz(); };
             } else {
-                area.innerHTML = `<div style="text-align:center;"><h3>Quiz Completed!</h3><div class="quiz-score" style="font-size:1.5rem;">Your Score: ${quizScore} / ${quizQuestions.length}</div><p style="margin:1rem 0;font-size:1.1rem;">${quizScore===quizQuestions.length?"Excellent work!":quizScore>=quizQuestions.length/2?"Good job! Keep learning.":"Keep exploring WealthWell to boost your financial literacy."}</p><button class="quiz-restart-btn" onclick="restartQuiz()">Try Again</button></div>`;
+                area.innerHTML = `<div style="text-align:center;"><h3>Quiz Completed!</h3><div class="quiz-score" style="font-size:1.5rem;">Your Score: ${quizScore} / ${quizQuestions.length}</div><p style="margin:1rem 0;font-size:1.1rem;">${quizScore===quizQuestions.length?"Excellent work!":quizScore>=quizQuestions.length/2?"Good job! Keep learning.":"Keep exploring Compound to boost your financial literacy."}</p><button class="quiz-restart-btn" onclick="restartQuiz()">Try Again</button></div>`;
             }
         }
         function restartQuiz() { quizIndex=0; quizScore=0; quizAnswered=false; renderQuiz(); }
